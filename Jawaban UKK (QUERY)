@@ -1,0 +1,69 @@
+-- 1. item apa yang terjual di tanggal tertentu yang paling banyak
+SELECT
+penjualan.tanggal_penjualan,
+produk.nama_produk, 
+SUM(detail_penjualan.jumlah_produk) as Total_Penjualan
+FROM detail_penjualan
+JOIN penjualan on detail_penjualan.id_penjualan = penjualan.id_penjualan
+JOIN produk on detail_penjualan.id_produk = produk.id_produk
+where tanggal_penjualan = '2025-03-01'
+GROUP BY nama_produk desc
+
+
+
+-- 2. berapa rata rata penjualan dalam satu bulan ada bulan januari februari, (berarti yang diinput bervariasi)
+SELECT
+MONTHNAME(penjualan.tanggal_penjualan) AS Nama_Bulan,
+produk.nama_produk, 
+COUNT(penjualan.total_harga) as Jumlah_Penjualan,
+SUM(detail_penjualan.subtotal) as Total_Penjualan,
+AVG(detail_penjualan.subtotal) as Rata_Rata_Penjualan
+FROM detail_penjualan
+JOIN penjualan on detail_penjualan.id_penjualan = penjualan.id_penjualan
+JOIN produk on detail_penjualan.id_produk = produk.id_produk
+GROUP BY MONTH(tanggal_penjualan) desc
+
+
+
+-- 3. produk yang paling banyak menghasilkan untung (artinya Harga modal dan jualnya paling besar dan menghasilkan)
+SELECT
+produk.nama_produk,
+produk.harga_beli,
+produk.harga_jual,
+produk.stok,
+detail_penjualan.jumlah_produk,
+(produk.harga_jual - produk.harga_beli) as keuntungan_per_item,
+((produk.harga_jual - produk.harga_beli) * jumlah_produk ) as keuntungan_penjualan
+from detail_penjualan
+join produk on detail_penjualan.id_produk = produk.id_produk
+GROUP BY keuntungan_penjualan desc
+
+
+
+
+-- 4. harus bisa melihat cara bayar customer. Cash qris debit (Laporan penjualan harian berdasarkan cara bayar : hari ini yang bayar cash 100000 yang qris sekian)
+SELECT
+p1.tanggal_penjualan,
+detail_penjualan.jenis_pembayaran,
+SUM(detail_penjualan.subtotal)
+FROM detail_penjualan
+JOIN penjualan as p1 on detail_penjualan.id_penjualan = p1.id_penjualan
+JOIN produk on detail_penjualan.id_produk = produk.id_produk
+where tanggal_penjualan = '2025-02-19'
+GROUP BY jenis_pembayaran desc
+
+
+
+
+-- 5. buat query yang melihat stok mana yang habis
+select
+produk.nama_produk,
+produk.harga_beli,
+produk.harga_jual,
+produk.stok
+from produk
+GROUP BY stok desc
+
+
+INSERT INTO tbl_name VALUES(expr, expr)
+
